@@ -6,23 +6,35 @@ workflows:
     environment:
       java: 11
       xcode: 16.2
+      android_signing:
+        - keystore_reference
+      groups:
+        - cordova
+      vars:
+        CORDOVA_VERSION: 12.0.0
     scripts:
       - name: Проверка версии Node и NPM
         script: |
           node --version
           npm --version
-      - name: Установка зависимостей
+      - name: Проверка Android SDK
         script: |
-          npm install -g cordova
+          echo $ANDROID_SDK_ROOT
+          ls -la $ANDROID_SDK_ROOT/platform-tools || true
+          ls -la $ANDROID_SDK_ROOT/build-tools || true
+      - name: Установка Cordova
+        script: |
+          npm install -g cordova@$CORDOVA_VERSION
+          cordova -v
+      - name: Установка зависимостей проекта
+        script: |
           npm install
       - name: Добавление Android платформы
         script: |
-          cordova platform add android || true
-      - name: Проверка зависимостей
-        script: |
-          cordova requirements
+          cordova platform rm android || true
+          cordova platform add android
       - name: Сборка APK
         script: |
-          cordova build android --release
+          cordova build android --release --verbose
     artifacts:
       - platforms/android/app/build/outputs/apk/release/*.apk
