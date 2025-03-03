@@ -2,9 +2,10 @@ workflows:
   cordova-android:
     name: Cordova Android App
     max_build_duration: 60
-    instance_type: mac_mini_m1
+    instance_type: mac_mini_m2
     environment:
       java: 11
+      xcode: 16.2
     scripts:
       - name: Проверка версии Node и NPM
         script: |
