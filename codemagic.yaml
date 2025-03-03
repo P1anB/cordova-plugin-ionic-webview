@@ -6,10 +6,6 @@ workflows:
     environment:
       java: 11
       xcode: 16.2
-      android_signing:
-        - keystore_reference
-      groups:
-        - cordova
       vars:
         CORDOVA_VERSION: 12.0.0
     scripts:
@@ -33,8 +29,8 @@ workflows:
         script: |
           cordova platform rm android || true
           cordova platform add android
-      - name: Сборка APK
+      - name: Сборка APK (debug)
         script: |
-          cordova build android --release --verbose
+          cordova build android --debug --verbose
     artifacts:
-      - platforms/android/app/build/outputs/apk/release/*.apk
+      - platforms/android/app/build/outputs/apk/debug/*.apk
