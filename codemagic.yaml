@@ -9,19 +9,34 @@ workflows:
       vars:
         CORDOVA_VERSION: 12.0.0
     scripts:
-      - name: Проверка версии Node и NPM
+      - name: Проверка среды разработки
         script: |
           node --version
           npm --version
-      - name: Проверка Android SDK
+          echo "Текущая директория: $(pwd)"
+          ls -la
+      - name: Проверка структуры проекта
         script: |
-          echo $ANDROID_SDK_ROOT
-          ls -la $ANDROID_SDK_ROOT/platform-tools || true
-          ls -la $ANDROID_SDK_ROOT/build-tools || true
+          if [ -f "config.xml" ]; then
+            echo "Обнаружен файл config.xml"
+          else
+            echo "Файл config.xml не найден"
+          fi
+          if [ -d "www" ]; then
+            echo "Директория www существует"
+          else
+            echo "Директория www не найдена"
+          fi
       - name: Установка Cordova
         script: |
           npm install -g cordova@$CORDOVA_VERSION
           cordova -v
+      - name: Инициализация проекта Cordova (если необходимо)
+        script: |
+          if [ ! -f "config.xml" ]; then
+            echo "Инициализация нового проекта Cordova"
+            cordova create . com.example.app AppName
+          fi
       - name: Установка зависимостей проекта
         script: |
           npm install
